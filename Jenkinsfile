@@ -19,24 +19,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
+                // Verify Node and npm versions
+                sh 'node -v'
+                sh 'npm -v'
+
+                // Install backend dependencies
                 sh 'npm install'
 
+                // Install and build frontend
                 sh '''
-                    # Install frontend dependencies and build
                     cd frontend
                     npm install
                     npm run build || true
                 '''
 
-                sh '''
-                    # Generate SBOM (optional)
-                    npm run sbom || true
-                '''
+                // Generate SBOM (optional)
+                sh 'npm run sbom || true'
 
-                sh '''
-                    # Fix vulnerabilities (safe mode)
-                    npm audit fix || true
-                '''
+                // Fix vulnerabilities (safe mode)
+                sh 'npm audit fix || true'
             }
         }
 
@@ -52,6 +53,7 @@ pipeline {
                         echo "Skipping frontend tests (karma.conf.js not found)"
                     }
 
+                    // Run backend/server tests
                     sh 'npm run test:server || true'
                 }
             }
@@ -59,11 +61,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    def scannerHome = tool 'SonarScanner'
-                    withSonarQubeEnv('SonarQube') {
-                        sh "${scannerHome}/bin/sonar-scanner"
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    sh 'sonar-scanner'
                 }
             }
         }
@@ -71,7 +70,7 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline completed 🎉"
+            echo "Pipeline completed successfully 🎉"
         }
     }
 }
