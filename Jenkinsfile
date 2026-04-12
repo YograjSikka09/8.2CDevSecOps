@@ -1,4 +1,42 @@
-pipeline {
+node {
+
+    tool name: 'NodeJS-20', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+
+    stage('Checkout SCM') {
+        checkout scm
+    }
+
+    stage('Install Dependencies') {
+        sh 'node -v'
+        sh 'npm -v'
+        sh 'npm install || true'
+        dir('frontend') {
+            sh 'npm install || true'
+        }
+    }
+
+    stage('Build Application') {
+        dir('frontend') {
+            sh 'npm run build || true'
+        }
+    }
+
+    stage('Run Tests') {
+        sh 'npm run test:server || true'
+    }
+
+    stage('Security Scan') {
+        sh 'npm audit || true'
+    }
+
+    stage('SonarQube Analysis') {
+        withSonarQubeEnv('SonarQube') {
+            sh 'sonar-scanner || true'
+        }
+    }
+
+    echo "Pipeline finished"
+}pipeline {
     agent any
 
     tools {
