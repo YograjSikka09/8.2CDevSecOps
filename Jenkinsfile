@@ -23,6 +23,10 @@ node {
         sh 'npm run test:server || true'
     }
 
+    stage('Generate Coverage Report') {
+        sh 'npm run coverage || true'
+    }
+
     stage('Security Scan') {
         sh 'npm audit || true'
     }
