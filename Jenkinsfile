@@ -38,23 +38,6 @@ node {
         }
     }
 
-    stage('SonarCloud Analysis') {
-        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-            def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-            sh """
-                ${scannerHome}/bin/sonar-scanner \
-                -Dsonar.projectKey=YograjSikka09_8.2CDevSecOps \
-                -Dsonar.organization=yograjsikka09 \
-                -Dsonar.host.url=https://sonarcloud.io \
-                -Dsonar.login=${SONAR_TOKEN} \
-                -Dsonar.sources=. \
-                -Dsonar.exclusions=node_modules/**,test/** \
-                -Dsonar.projectName=NodeJS Goof Vulnerable App \
-                -Dsonar.sourceEncoding=UTF-8
-            """
-        }
-    }
-
     echo 'Pipeline finished successfully'
 
 }
