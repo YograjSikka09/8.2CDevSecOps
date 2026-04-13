@@ -39,7 +39,7 @@ node {
     }
 
     stage('SonarCloud Analysis') {
-        withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_TOKEN')]) {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
             def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
             sh """
                 ${scannerHome}/bin/sonar-scanner \
